@@ -1,35 +1,29 @@
 # billete.py
+# Módulo de ayuda para interacción por consola sobre un Bus
+
 from bus import Bus
+from cliente import Cliente
 
-class Billete:
+def comprar_interactivo(bus: Bus):
+    try:
+        nombre = input("Nombre del cliente: ").strip()
+        apellido = input("Apellido del cliente: ").strip()
+        cantidad = int(input("¿Cuántos billetes desea comprar? ").strip())
+    except ValueError:
+        return False, "Entrada inválida. Debe introducir un número entero en la cantidad."
 
-    def __init__(self, plazas_max: int, matricula: str):
-        self.bus = Bus(plazas_max, matricula)
+    if not nombre or not apellido:
+        return False, "Nombre y apellido son obligatorios."
 
-    def venta_billete(self):
-        try:
-            tickets = int(input("¿Cuántos billetes quieres comprar? "))
-        except ValueError:
-            print("Entrada inválida. Debes introducir un número entero.")
-            return self.estado()
+    cliente = Cliente(nombre, apellido)
+    ok, msg = bus.vender_plazas(cantidad, cliente)
+    return ok, msg
 
-        ok, msg = self.bus.vender_plazas(tickets)
-        print(msg)
-        return self.estado()
+def devolver_interactivo(bus: Bus):
+    try:
+        cantidad = int(input("¿Cuántos billetes desea devolver? ").strip())
+    except ValueError:
+        return False, "Entrada inválida. Debe introducir un número entero en la cantidad."
 
-    def devolucion(self):
-        try:
-            tickets = int(input("¿Cuántos billetes quieres devolver? "))
-        except ValueError:
-            print("Entrada inválida. Debes introducir un número entero.")
-            return self.estado()
-
-        ok, msg = self.bus.devolver_plazas(tickets)
-        print(msg)
-        return self.estado()
-
-    def estado(self):
-        total = self.bus.plazas_max
-        libres = self.bus.plazas_libres
-        vendidas = self.bus.plazas_vendidas
-        return total, libres, vendidas
+    ok, msg = bus.devolver_plazas(cantidad)
+    return ok, msg
